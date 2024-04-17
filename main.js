@@ -28,11 +28,30 @@ const getNewsByKeyword = async() => {
 }
 
 const getNews = async(url) =>{
-    const response = await fetch(url)
-    const data = await response.json()
-    newsList = data.articles
+    try {
+    
+        const response = await fetch(url)
+        
+        const data = await response.json()
+        console.log('data', data)
+        if(response.status===200){
+            if(data.articles.length===0){
+                throw new Error("No result for this research")
+            }
 
-    render()
+            newsList = data.articles
+            totalResults = data.totalResults
+
+            render()
+            paginationRender(totalResults)
+        }else{
+            throw new Error(data.message)
+        }
+
+    } catch(error){
+        errorRender(error.message)
+    }
+    
 }
 
 const render = () => {
@@ -50,6 +69,39 @@ const render = () => {
     </div>
 </div>`).join('');
     document.getElementById('news-board').innerHTML = newsHTML;
+
+}
+
+const errorRender = (errorMessage) => {
+    const errorHTML =`<div class="alert alert-danger" role="alert">
+  ${errorMessage}
+</div>`
+
+    document.getElementById('news-board').innerHTML=errorHTML
+}
+
+let totalResults = 0
+let page = 1 // current page number
+const pageSize = 10 // showing how many articles in a page
+let groupSize = 5 // number of pages in one group
+
+const paginationRender = (totalResult) => {
+    // page
+    // pageSize
+    const groupSize = Math.ceil(totalResult / 5) // how many groups there are
+
+    let pageGroup = Math.ceil(page / groupSize) // which group does current page belong
+    let lastPage = pageGroup * groupSize
+    let firstPage = lastPage - (groupSize-1)
+    let paginationHTML=``
+
+    for (let i=firstPage; i<lastPage; i++){
+        paginationHTML+=`<li class="page-item" onClick="moveToPage()"><a class="page-link" href="#">${i}</a></li>`
+    }
+
+    document.querySelector(".pagination").innerHTML=paginationHTML
+}
+const moveToPage = () => {
 
 }
 
