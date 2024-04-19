@@ -1,8 +1,10 @@
-const API_KEY = `f17c0665a4984e26955a5cdb01c37a40`
+const API_KEY =`f17c0665a4984e26955a5cdb01c37a40`
+
 let newsList = []
+
 const menus = document.querySelectorAll(".menus button")
 
-menus.forEach((menu)=> menu.addEventListener("click", (event)=> getNewsByCategory(event)))
+menus.forEach((menu)=>{menu.addEventListener("click", (event)=> getNewsByCategory(event))})
 
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
 
@@ -10,106 +12,159 @@ const getLatestNews = async() => {
     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
 
     getNews(url)
-
 }
 
-const getNewsByCategory = async(event) =>{
-    const category = event.target.textContent.toLowerCase()
-    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`)
+const getNewsByCategory = (event) => {
+    console.log('clicked')
     
-    getNews(url)
-}
-const getNewsByKeyword = async() => {
-    const keyword = document.getElementById('search-input').value
-    console.log("keyword", keyword)
-    url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`)
-
-    getNews(url)
 }
 
-let totalResults = 0
-let page = 1 // current page number
-const pageSize = 10 // showing how many articles in a page
-let groupSize = 5 // number of pages in one group
-
-const getNews = async() =>{
-    try {
-        url.searchParams.set('page',page)
-        url.searchParams.set('pageSize', pageSize)
+const getNews = async(page) => {
+    try{
+        url = url.searchParams.append('page', page)
+        url = url.searchParams.append('pageSize', pageSize)
 
         const response = await fetch(url)
         const data = await response.json()
 
-        if(response.status===200){
-            if(data.articles.length===0){
-                throw new Error("No result for this research")
-            }
-
-            newsList = data.articles
-            totalResults = data.totalResults
-
-            render()
-            paginationRender(totalResults)
-        }else{
-            throw new Error(data.message)
-        }
-
-    } catch(error){
-        errorRender(error.message)
     }
-    
+    catch (error){
+        console.log('this is errored')
+    } 
 }
 
 const render = () => {
-    const newsHTML = newsList.map(
-        (news) => `<div class="row news">
-    <div class="col-lg-4">
-        <img class="news-img-size" src=${news.urlToImage} />
-    </div>
-    <div class="col-lg-8">
-        <h2>${news.title}</h2>
-        <p>${news.description}</p>
-        <div>
-            ${news.source.name} * ${news.publishedAt}
+        const newsHTML = newsList.map(
+            (news) => `<div class="row news">
+        <div class="col-lg-4">
+            <img class="news-img-size" src=${news.urlToImage} />
         </div>
-    </div>
-</div>`).join('');
-    document.getElementById('news-board').innerHTML = newsHTML;
-
+        <div class="col-lg-8">
+            <h2>${news.title}</h2>
+            <p>${news.description}</p>
+            <div>
+                ${news.source.name} * ${news.publishedAt}
+            </div>
+        </div>
+    </div>`).join('');
+        document.getElementById('news-board').innerHTML = newsHTML;
+    
 }
 
-const errorRender = (errorMessage) => {
-    const errorHTML =`<div class="alert alert-danger" role="alert">
-  ${errorMessage}
-</div>`
+getLatestNews()
 
-    document.getElementById('news-board').innerHTML=errorHTML
-}
+// const API_KEY = `f17c0665a4984e26955a5cdb01c37a40`
+// let newsList = []
+// const menus = document.querySelectorAll(".menus button")
 
-const paginationRender = (totalResult) => {
-    const groupSize = Math.ceil(totalResult / 5) // how many groups there are
-    const totalPages = Math.ceil(totalResult/pageSize)
-    let pageGroup = Math.ceil(page / groupSize) // which group does current page belong
-    let lastPage = pageGroup * groupSize
-    if (lastPage > totalPages){
-        lastPage = totalPages
-    }
-    let firstPage = lastPage - (groupSize-1) <=0 ? 1: lastPage - (groupSize-1)
-    let paginationHTML = `<li class="page-item"><a class="page-link" href="#">Previous</a></li>`
+// menus.forEach((menu)=> menu.addEventListener("click", (event)=> getNewsByCategory(event)))
 
-    for (let i = firstPage; i<lastPage; i++){
-        paginationHTML +=
-        `<li class="page-item ${
-            i===page ? "active":""
-        }" onClick="moveToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
-    }
-    paginationHTML += `<li class="page-item onClick="moveToPage()"><a class="page-link" href="#">Next</a></li>`
-    document.querySelector(".pagination").innerHTML=paginationHTML
-}
+// let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
 
-const moveToPage = (pageNumber) => {
-    page = pageNumber
-    getNews(page)
-}
+// const getLatestNews = async() => {
+//     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`)
 
-getLatestNews();
+//     getNews(url)
+
+// }
+
+// const getNewsByCategory = async(event) =>{
+//     const category = event.target.textContent.toLowerCase()
+//     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`)
+    
+//     getNews(url)
+// }
+// const getNewsByKeyword = async() => {
+//     const keyword = document.getElementById('search-input').value
+//     console.log("keyword", keyword)
+//     url = new URL(`https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`)
+
+//     getNews(url)
+// }
+
+// let totalResults = 0
+// let page = 1 // current page number
+// const pageSize = 10 // showing how many articles in a page
+// let groupSize = 5 // number of pages in one group
+
+// const getNews = async() =>{
+//     try {
+//         url.searchParams.set('page',page)
+//         url.searchParams.set('pageSize', pageSize)
+
+//         const response = await fetch(url)
+//         const data = await response.json()
+
+//         if(response.status===200){
+//             if(data.articles.length===0){
+//                 throw new Error("No result for this research")
+//             }
+
+//             newsList = data.articles
+//             totalResults = data.totalResults
+
+//             render()
+//             paginationRender(totalResults)
+//         }else{
+//             throw new Error(data.message)
+//         }
+
+//     } catch(error){
+//         errorRender(error.message)
+//     }
+    
+// }
+
+// const render = () => {
+//     const newsHTML = newsList.map(
+//         (news) => `<div class="row news">
+//     <div class="col-lg-4">
+//         <img class="news-img-size" src=${news.urlToImage} />
+//     </div>
+//     <div class="col-lg-8">
+//         <h2>${news.title}</h2>
+//         <p>${news.description}</p>
+//         <div>
+//             ${news.source.name} * ${news.publishedAt}
+//         </div>
+//     </div>
+// </div>`).join('');
+//     document.getElementById('news-board').innerHTML = newsHTML;
+
+// }
+
+// const errorRender = (errorMessage) => {
+//     const errorHTML =`<div class="alert alert-danger" role="alert">
+//   ${errorMessage}
+// </div>`
+
+//     document.getElementById('news-board').innerHTML=errorHTML
+// }
+
+// const paginationRender = (totalResult) => {
+//     const groupSize = Math.ceil(totalResult / 5) // how many groups there are
+//     const totalPages = Math.ceil(totalResult/pageSize)
+//     let pageGroup = Math.ceil(page / groupSize) // which group does current page belong
+//     let lastPage = pageGroup * groupSize
+//     if (lastPage > totalPages){
+//         lastPage = totalPages
+//     }
+//     let firstPage = lastPage - (groupSize-1) <=0 ? 1: lastPage - (groupSize-1)
+//     let paginationHTML = `<li class="page-item"><a class="page-link" href="#">Previous</a></li>`
+
+//     for (let i = firstPage; i<lastPage; i++){
+//         paginationHTML +=
+//         `<li class="page-item ${
+//             i===page ? "active":""
+//         }" onClick="moveToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
+//     }
+//     paginationHTML += `<li class="page-item onClick="moveToPage()"><a class="page-link" href="#">Next</a></li>`
+//     document.querySelector(".pagination").innerHTML=paginationHTML
+// }
+
+// const moveToPage = (pageNumber) => {
+//     page = pageNumber
+//     getNews(page)
+// }
+
+// getLatestNews();
