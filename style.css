@@ -30,7 +30,19 @@
 .news-img-size {
     max-width: 100%;
     max-height: 250px;
+}
 
+.article-title {
+    cursor: pointer;
+}
+
+.current-news-img-size { 
+    width: 100%;
+    max-height: 800px;
+}
+
+.article-title {
+    cursor: pointer;
 }
 
 .news {
