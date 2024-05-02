@@ -1,5 +1,5 @@
 
-const API_KEY =`f17c0665a4984e26955a5cdb01c37a40`
+
 
 let newsList = []
 
